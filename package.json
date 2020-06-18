@@ -1,0 +1,15 @@
+{
+  "name": "gwsearch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:graph": "mkdir -p dist && cd graph && make && cp dag.txt ../dist/dag.txt",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kurogoma",
+  "license": "MIT",
+  "devDependencies": {
+    "yargs": "^15.3.1"
+  }
+}

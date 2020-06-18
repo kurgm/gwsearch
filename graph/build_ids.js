@@ -13,7 +13,7 @@ const [srcpath, dstpath] = require('yargs')
 function parseIDS(ids) {
   const idcOrDc = /[^\s&\[\]]|&CDP-[0-9A-F]{4};/gu;
 
-  const idsRe = new RegExp(`^(${idcOrDc.source})+(\\[[A-Z]+\\])?$`, 'u');
+  const idsRe = new RegExp(`^((?:${idcOrDc.source})+)(?:\\[[A-Z]+\\])?$`, 'u');
   const match = idsRe.exec(ids);
   if (!match) {
     return [];

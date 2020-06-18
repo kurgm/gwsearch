@@ -9,10 +9,16 @@ graph_dump.txt: dump_newest_only.txt
 ids-cdp.txt:
 	wget -O $@ https://github.com/cjkvi/cjkvi-ids/raw/master/ids-cdp.txt
 
+ids-ext-cdef.txt:
+	wget -O $@ https://github.com/cjkvi/cjkvi-ids/raw/master/ids-ext-cdef.txt
+
 graph_ids.txt: ids-cdp.txt
 	node build_ids.js $< $@
 
-graph_merged.txt: graph_dump.txt graph_ids.txt
+graph_ids_cdef.txt: ids-ext-cdef.txt
+	node build_ids.js $< $@
+
+graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdef.txt
 	cat $^ > $@
 
 dag.txt: graph_merged.txt

@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build:graph": "cd graph && make",
-    "build:web": "parcel build src/index.html",
+    "build:web": "parcel build src/index.html --public-url .",
     "build": "npm run build:graph && npm run build:web",
     "dev": "npm run build:graph && parcel src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "rm -rf dist && npm run build:graph && npm run build:web --public-url gwsearch/ && gh-pages -d dist"
+    "deploy": "rm -rf dist && npm run build && gh-pages -d dist"
   },
   "author": "Kurogoma",
   "license": "GPLv2",

@@ -8,11 +8,13 @@
     "build:web": "parcel build src/index.html",
     "build": "npm run build:graph && npm run build:web",
     "dev": "npm run build:graph && parcel src/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "rm -rf dist && npm run build:graph && npm run build:web --public-url gwsearch/ && gh-pages -d dist"
   },
   "author": "Kurogoma",
   "license": "GPLv2",
   "devDependencies": {
+    "gh-pages": "^3.0.0",
     "parcel-bundler": "^1.12.4",
     "yargs": "^15.3.1"
   }

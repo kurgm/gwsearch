@@ -2,10 +2,11 @@
 
 import 'regenerator-runtime/runtime';
 
-import { DAG } from './dag';
-
-// @ts-ignore
-import graphURL from '../graph/dag.txt';
+/** @typedef {import("./worker").Desc} Desc */
+/** @typedef {import("./worker").WRequest} WRequest */
+/** @typedef {import("./worker").WResponse} WResponse */
+/** @typedef {import("./worker").WorkerRequest} WorkerRequest */
+/** @typedef {import("./worker").WorkerResponse} WorkerResponse */
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = /** @type {HTMLFormElement} */(document.getElementById('search_form'));
@@ -30,57 +31,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /**
-   * @typedef {object} Desc
-   * @property {string} name
-   * @property {string[]} children
-   */
-
-  const graphPromise = fetch(graphURL).then(async (response) => {
-    const text = await response.text();
-    return DAG.load(text);
+  const worker = new Worker('./worker.js');
+  /** @type {{ resolve: (dat: WResponse) => void; reject: (err: any) => void; }[]} */
+  const promises = [];
+  worker.addEventListener('message', (evt) => {
+    if (!(evt.data instanceof Object)) {
+      return;
+    }
+    const res = /** @type {WorkerResponse} */(evt.data);
+    const promise = promises[res.id];
+    if (!promise) {
+      return;
+    }
+    if ("error" in res) {
+      promise.reject(res.error);
+      return;
+    }
+    promise.resolve(res);
   });
+  /**
+   * @param {WRequest} req
+   * @returns {Promise<WResponse>}
+   */
+  function requestWorker(req) {
+    return new Promise((resolve, reject) => {
+      const id = promises.push({ resolve, reject }) - 1;
+      worker.postMessage(/** @type {WorkerRequest} */({
+        ...req,
+        id,
+      }));
+    });
+  }
+
   /**
    * @param {string[]} query
    * @returns {Promise<Desc[]>}
    */
   async function processQuery(query) {
-    const graph = await graphPromise;
-    return graph.hcd(query).sort(nameCompar).map((name) => ({
-      name,
-      children: graph.get(name).sort(nameCompar),
-    }));
+    const res = await requestWorker({
+      type: "query",
+      query,
+    });
+    return /** @type {import('./worker').ProcessQueryResponse} */(res).value;
   }
+
   /**
    * @param {string[]} items
    * @returns {Promise<Desc[]>}
    */
   async function getChildren(items) {
-    const graph = await graphPromise;
-    return items.map((name) => ({
-      name,
-      children: graph.get(name).sort(nameCompar),
-    }));
-  }
-
-  /**
-   * @param {string} a
-   * @param {string} b
-   */
-  function nameCompar(a, b) {
-    const ucsRe = /^(?:abst:)?u([0-9a-f]{4,})/;
-    const ma = ucsRe.exec(a);
-    const mb = ucsRe.exec(b);
-    const ownedRe = /_/;
-    const idsRe = /^u2ff[0-9ab]-/;
-    return (
-      (-a.startsWith('abst:') - -b.startsWith('abst:')) ||
-      (+ownedRe.test(a) - +ownedRe.test(b)) ||
-      (+idsRe.test(a) - +idsRe.test(b)) ||
-      (+!ma - +!mb) ||
-      (ma && mb && (parseInt(ma[1], 16) - parseInt(mb[1], 16))) ||
-      (a > b ? 1 : a < b ? -1 : 0)
-    );
+    const res = await requestWorker({
+      type: "children",
+      items,
+    });
+    return /** @type {import('./worker').ChildrenResponse} */(res).value;
   }
 
   let currentQuery = null;
@@ -102,6 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
+
+    while (resultDiv.firstChild) {
+      resultDiv.removeChild(resultDiv.firstChild);
+    }
+    resultDiv.appendChild(document.createTextNode('(検索中)'));
+
     const query = input.value;
     doSearch(query);
   });
@@ -170,13 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
       li.removeChild(li.lastChild);
       return;
     }
-    btn.textContent = '...';
+    btn.disabled = true;
     const items = li.dataset.children.split(',');
     getChildren(items).then((children) => {
       if (!resultDiv.contains(li)) {
         return;
       }
       const ul = generateUl(children);
+      btn.disabled = false;
       btn.textContent = '-';
       li.appendChild(ul);
     });

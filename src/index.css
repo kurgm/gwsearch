@@ -12,3 +12,23 @@ img.thumb {
 #search_query {
   flex: 1;
 }
+
+li {
+  list-style-position: inside;
+}
+
+li[data-children] {
+  list-style: none;
+}
+
+li > button {
+  position: relative;
+  left: -5px;
+  width: 1.5em;
+  padding: 0;
+  text-align: center;
+  border: 1px solid #cccccc;
+  background-color: #f3f3f3;
+  color: #000000;
+  cursor: pointer;
+}

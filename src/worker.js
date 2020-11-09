@@ -6,7 +6,7 @@ import 'regenerator-runtime/runtime';
 import { DAG } from './dag';
 
 // @ts-ignore
-import graphURL from '../graph/dag.txt';
+import graphURL from 'url:../graph/dag.txt';
 
 /**
  * @typedef {object} Desc

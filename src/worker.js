@@ -1,8 +1,6 @@
 // @ts-check
 /// <reference lib="webworker" />
 
-import 'regenerator-runtime/runtime';
-
 import { DAG } from './dag';
 
 // @ts-ignore

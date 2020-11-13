@@ -1,7 +1,5 @@
 // @ts-check
 
-import 'regenerator-runtime/runtime';
-
 /** @typedef {import("./worker").Desc} Desc */
 /** @typedef {import("./worker").WRequest} WRequest */
 /** @typedef {import("./worker").WResponse} WResponse */

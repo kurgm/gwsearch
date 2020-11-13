@@ -12,6 +12,10 @@
   },
   "author": "Kurogoma",
   "license": "GPL-2.0-or-later",
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
   "devDependencies": {
     "gh-pages": "^3.1.0",
     "parcel": "^2.0.0-nightly.442",

@@ -1,5 +1,3 @@
-// @ts-check
-
 /** @typedef {import("./worker").Desc} Desc */
 /** @typedef {import("./worker").WRequest} WRequest */
 /** @typedef {import("./worker").WResponse} WResponse */
@@ -29,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const worker = new Worker('./worker.js');
+  const worker = new Worker(new URL('worker.js', import.meta.url), { type: 'module' });
   /** @type {{ resolve: (dat: WResponse) => void; reject: (err: any) => void; }[]} */
   const promises = [];
   worker.addEventListener('message', (evt) => {

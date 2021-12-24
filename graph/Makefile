@@ -1,7 +1,7 @@
 all: dag.txt
 
 dump_newest_only.txt:
-	wget -O - https://glyphwiki.org/dump.tar.gz | tar -xvf - dump_newest_only.txt
+	wget -q -O - https://glyphwiki.org/dump.tar.gz | tar xvzf - dump_newest_only.txt
 
 graph_dump.txt: dump_newest_only.txt
 	node build_dump.js $< $@

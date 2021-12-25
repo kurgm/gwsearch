@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.createElement('a');
         link.href = `https://glyphwiki.org/wiki/${name}`;
         const img = document.createElement('img');
+        img.loading = 'lazy';
         img.src = `https://glyphwiki.org/glyph/${name}.50px.png`;
         img.alt = img.title = link.title = name;
         img.className = 'thumb';

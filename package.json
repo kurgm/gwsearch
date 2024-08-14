@@ -8,7 +8,7 @@
     "build": "npm run build:graph && npm run build:web",
     "dev": "npm run build:graph && parcel src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "rm -rf dist && npm run build && gh-pages -d dist"
+    "deploy": "rm -rf dist && npm run build && gh-pages -d dist --nojekyll --no-history"
   },
   "author": "Kurogoma",
   "license": "GPL-2.0-or-later",

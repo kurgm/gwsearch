@@ -17,8 +17,8 @@
     "not IE 11"
   ],
   "devDependencies": {
-    "gh-pages": "^6.0.0",
-    "parcel": "^2.0.1",
+    "gh-pages": "^6.3.0",
+    "parcel": "^2.13.3",
     "yargs": "^17.3.1"
   }
 }

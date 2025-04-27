@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return /** @type {import('./worker').ChildrenResponse} */(res).value;
   }
 
+  /** @type {string[] | null} */
   let currentQuery = null;
   /** @param {string} queryStr */
   function doSearch(queryStr) {

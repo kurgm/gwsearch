@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { parseArgs } from 'util';
-import { DAG } from './dag.js';
+import { DAG } from './lib/dag.js';
 
 const { positionals } = parseArgs({
   strict: true,

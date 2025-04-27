@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const readline = require('readline');
-const { DAG } = require('./dag');
+import { createReadStream } from 'fs';
+import { createInterface } from 'readline';
+import { parseArgs } from 'util';
+import { DAG } from './dag.js';
 
-const [srcpath, dstpath] = require('yargs')
-  .check((argv) => argv._.length === 2)
-  .argv._;
-
+const { positionals } = parseArgs({
+  strict: true,
+  allowPositionals: true,
+});
+if (positionals.length !== 2) {
+  console.error('Error: invalid number of arguments');
+  process.exit(1);
+}
+const [srcpath, dstpath] = positionals;
 
 /** @param {string} ids */
 function parseIDS(ids) {
@@ -33,9 +39,9 @@ function parseIDS(ids) {
 
 /** @param {string} path */
 async function* readIdsFile(path) {
-  const inputStream = fs.createReadStream(path);
+  const inputStream = createReadStream(path);
 
-  const inputRL = readline.createInterface({
+  const inputRL = createInterface({
     input: inputStream,
     crlfDelay: Infinity,
   });
@@ -73,23 +79,18 @@ function refer(referrer, target) {
   graph.addEdge(target, referrer);
 }
 
-(async () => {
-  for await (const { target, idses } of readIdsFile(srcpath)) {
-    for (const ids of idses) {
-      if (ids.length === 1 && ids[0] === target) {
-        continue;
-      }
-      const idc = /^u2ff[0-9ab]$/;
-      const specialDc = /^u(246[0-9a-f]|247[0-3]|ff1f)$/; // encircled numerics and wildcard
-      const dcs = ids.filter((idcOrDc) => !idc.test(idcOrDc) && !specialDc.test(idcOrDc));
+for await (const { target, idses } of readIdsFile(srcpath)) {
+  for (const ids of idses) {
+    if (ids.length === 1 && ids[0] === target) {
+      continue;
+    }
+    const idc = /^u2ff[0-9ab]$/;
+    const specialDc = /^u(246[0-9a-f]|247[0-3]|ff1f)$/; // encircled numerics and wildcard
+    const dcs = ids.filter((idcOrDc) => !idc.test(idcOrDc) && !specialDc.test(idcOrDc));
 
-      for (const dc of dcs) {
-        refer(`abst:${target}`, `abst:${dc}`);
-      }
+    for (const dc of dcs) {
+      refer(`abst:${target}`, `abst:${dc}`);
     }
   }
-  await graph.dump(dstpath);
-})().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+}
+await graph.dump(dstpath);

@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
-const { DAG } = require('./dag');
+import { parseArgs } from 'util';
+import { DAG } from './dag.js';
 
-const [srcpath, dstpath] = require('yargs')
-  .check((argv) => argv._.length === 2)
-  .argv._;
-
+const { positionals } = parseArgs({
+  strict: true,
+  allowPositionals: true,
+});
+if (positionals.length !== 2) {
+  console.error('Error: invalid number of arguments');
+  process.exit(1);
+}
+const [srcpath, dstpath] = positionals;
 
 const graph = new DAG();
 
-(async () => {
-  await graph.undump(srcpath);
-  await graph.save(dstpath);
-})().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+await graph.undump(srcpath);
+await graph.save(dstpath);

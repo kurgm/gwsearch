@@ -1,5 +1,5 @@
-const fs = require('fs');
-const readline = require('readline');
+import { createWriteStream, createReadStream } from 'fs';
+import { createInterface } from 'readline';
 
 /** @param {string[]} arr */
 function makeInv(arr) {
@@ -11,7 +11,7 @@ function makeInv(arr) {
   return result;
 }
 
-class DAG {
+export class DAG {
   /** @type {Map<string, Set<string>>} */
   edges = new Map();
 
@@ -29,7 +29,7 @@ class DAG {
 
   /** @param {string} filename */
   async dump(filename) {
-    const stream = fs.createWriteStream(filename);
+    const stream = createWriteStream(filename);
     stream.on('error', (err) => {
       console.error(err);
       process.exit(1);
@@ -50,8 +50,8 @@ class DAG {
 
   /** @param {string} filename */
   async undump(filename) {
-    const inputStream = fs.createReadStream(filename);
-    const inputRL = readline.createInterface({
+    const inputStream = createReadStream(filename);
+    const inputRL = createInterface({
       input: inputStream,
       crlfDelay: Infinity,
     });
@@ -70,7 +70,7 @@ class DAG {
 
   /** @param {string} filename */
   async save(filename) {
-    const stream = fs.createWriteStream(filename);
+    const stream = createWriteStream(filename);
     stream.on('error', (err) => {
       console.error(err);
       process.exit(1);
@@ -154,7 +154,3 @@ class DAG {
     return result;
   }
 }
-
-module.exports = {
-  DAG
-};

@@ -1,6 +1,7 @@
 {
   "name": "gwsearch",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "scripts": {
     "build:graph": "cd graph && make",
@@ -18,7 +19,6 @@
   ],
   "devDependencies": {
     "gh-pages": "^6.3.0",
-    "parcel": "^2.13.3",
-    "yargs": "^17.3.1"
+    "parcel": "^2.13.3"
   }
 }

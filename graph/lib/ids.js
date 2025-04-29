@@ -60,3 +60,5 @@ export function parseIDS(tokens) {
   }
   return stack[0];
 }
+
+export const UNREPRESENTABLE = 'uff1f'; // fullwidth question mark

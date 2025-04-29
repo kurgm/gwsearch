@@ -4,7 +4,7 @@ import { createReadStream } from 'fs';
 import { createInterface } from 'readline';
 import { parseArgs } from 'util';
 import { DAG } from './lib/dag.js';
-import { isIDC } from './lib/ids.js';
+import { isIDC, parseIDS } from './lib/ids.js';
 
 const { positionals } = parseArgs({
   strict: true,
@@ -87,8 +87,34 @@ for await (const { target, idses } of readIdsFile(srcpath)) {
     if (ids.length === 1 && ids[0] === target) {
       continue;
     }
+
+    let idsTokens = ids;
+    if (ids.includes('u31ef')) {
+      // subtraction
+      // Prevent X → ㇯XY and Y → ㇯XY from appearing in the graph
+      // since neither X nor Y is part of ㇯XY
+      const parsed = parseIDS(ids);
+      idsTokens = [parsed]
+        .map(
+          /** @returns {string | string[]} */
+          function rec(subtree) {
+            if (typeof subtree === 'string') {
+              return subtree;
+            }
+            if (subtree[0] === 'u31ef') {
+              // Replace ㇯XY with ？
+              return UNREPRESENTABLE;
+            }
+            return subtree.map(rec).flat();
+          }
+        )
+        .flat();
+    }
+
     const specialDc = /^u(246[0-9a-f]|247[0-3]|ff1f)$/; // encircled numerics and wildcard
-    const dcs = ids.filter((idcOrDc) => !isIDC(idcOrDc) && !specialDc.test(idcOrDc));
+    const dcs = idsTokens.filter(
+      (idcOrDc) => !isIDC(idcOrDc) && !specialDc.test(idcOrDc)
+    );
 
     for (const dc of dcs) {
       refer(`abst:${target}`, `abst:${dc}`);

@@ -57,14 +57,20 @@ async function* readIdsFile(path) {
       // the description of Unencoded Components
       const columns = line.split('\t');
       if (columns.length !== 4) continue;
-      const [, targetStr, , idsStr] = columns;
-      if (!idsStr) continue;
+      const [, targetStr, desc, idsStr] = columns;
       const targets_ = tokenize(targetStr);
       if (targets_.length !== 1) {
         throw new Error(`invalid target: ${targetStr}`);
       }
       const [target] = targets_;
-      yield { target, idses: [tokenize(idsStr)] };
+      const idses = idsStr ? [tokenize(idsStr)] : [];
+      const bshCodepoint = /\(((?:E[\dA-F]|F[0-8])[\dA-F]{2}) .\)$/.exec(
+        desc
+      )?.[1];
+      const reprGlyph = bshCodepoint
+        ? `unstable-bsh-${bshCodepoint.toLowerCase()}`
+        : undefined;
+      yield { target, idses, reprGlyph };
       continue;
     }
 
@@ -106,7 +112,7 @@ function refer(referrer, target) {
   graph.addEdge(target, referrer);
 }
 
-for await (const { target, idses } of readIdsFile(srcpath)) {
+for await (const { target, idses, reprGlyph } of readIdsFile(srcpath)) {
   for (const ids of idses) {
     if (ids.length === 1 && ids[0] === target) {
       continue;
@@ -147,6 +153,9 @@ for await (const { target, idses } of readIdsFile(srcpath)) {
     for (const dc of dcs) {
       refer(`abst:${target}`, `abst:${dc}`);
     }
+  }
+  if (reprGlyph) {
+    refer(reprGlyph, `abst:${target}`);
   }
 }
 await graph.dump(dstpath);

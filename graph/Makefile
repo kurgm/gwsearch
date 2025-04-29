@@ -9,6 +9,9 @@ graph_dump.txt: dump_newest_only.txt
 alias_dump.txt: dump_newest_only.txt
 	node build_alias_dump.js $< $@
 
+alias_cdp.txt:
+	node fetch_alias_cdp.js $@
+
 ids-cdp.txt:
 	wget -O $@ https://github.com/cjkvi/cjkvi-ids/raw/master/ids-cdp.txt
 
@@ -24,10 +27,10 @@ graph_ids_cdef.txt: ids-ext-cdef.txt
 graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdef.txt
 	cat $^ > $@
 
-alias_merged.txt: alias_dump.txt
+alias_merged.txt: alias_cdp.txt alias_dump.txt
 	cat $^ > $@
 
-dag.txt: graph_merged.txt alias_dump.txt
+dag.txt: graph_merged.txt alias_merged.txt
 	node build_dag.js $^ $@
 
 clean:

@@ -15,18 +15,17 @@ if (positionals.length !== 2) {
 }
 const [srcpath, dstpath] = positionals;
 
-/** @param {string} ids */
-function tokenize(ids) {
-  const charRe = /[^\s&\[\]]|&CDP-[0-9A-F]{4};/gu;
+/** @param {string} text */
+function tokenize(text) {
+  const charRe = /[^&]|&CDP-[0-9A-F]{4};/gu;
 
-  const idsRe = new RegExp(`^((?:${charRe.source})+)(?:\\[[A-Z]+\\])?$`, 'u');
-  const match = idsRe.exec(ids);
-  if (!match) {
+  const charsRe = new RegExp(`^(?:${charRe.source})+$`, 'u');
+  if (!charsRe.test(text)) {
     return [];
   }
 
   const result = [];
-  for (const token of match[1].match(charRe)) {
+  for (const token of text.match(charRe)) {
     if (token.startsWith('&CDP-')) {
       result.push(`cdp-${token.substr('&CDP-'.length, 4).toLowerCase()}`);
     } else {
@@ -62,7 +61,10 @@ async function* readIdsFile(path) {
       continue;
     }
     const [target] = targets_;
-    const idses = idsStrs.map(tokenize);
+    const idses = idsStrs.map((idsStr) => {
+      const m = /^([^\[]+)\[[^\]]*\]$/.exec(idsStr);
+      return tokenize(m ? m[1] : idsStr);
+    });
     yield { target, idses };
   }
 }

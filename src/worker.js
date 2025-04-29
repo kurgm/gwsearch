@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { DAG } from './dag';
+import { NamedDAG } from './dag';
 
 // @ts-ignore
 import graphURL from 'url:../graph/dag.txt';
@@ -13,7 +13,7 @@ import graphURL from 'url:../graph/dag.txt';
 
 const graphPromise = fetch(graphURL).then(async (response) => {
   const text = await response.text();
-  return DAG.load(text);
+  return NamedDAG.load(text);
 });
 
 /**

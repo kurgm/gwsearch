@@ -1,40 +1,29 @@
 export class DAG {
   /**
-   * @param {ReadonlyArray<string>} names
    * @param {ReadonlyArray<ReadonlyArray<number>>} edges
    */
-  constructor(names, edges) {
-    /** @readonly */
-    this.names = names;
+  constructor(edges) {
     /** @readonly */
     this.edges = edges;
-
-    /** @type {Map<string, number>} */
-    const namesInv = new Map();
-    for (let i = 0; i < names.length; i++) {
-      namesInv.set(names[i], i);
-    }
-    /** @readonly @type {Map<string, number>} */
-    this.namesInv = namesInv;
-
   }
 
-  /** @param {string} source */
+  /**
+   * @param {number} source
+   * @returns {readonly number[]}
+   */
   get(source) {
-    const sourceNum = this.namesInv.get(source);
-    if (typeof sourceNum === 'undefined') {
-      return [];
-    }
-    return this.edges[sourceNum].map((num) => this.names[num]);
+    return this.edges[source] ?? [];
   }
 
-  /** @param {string[]} vertexNames */
-  hcd(vertexNames) {
-    if (vertexNames.length === 0) {
+  /**
+   * @param {number[]} vertices
+   * @returns {number[]}
+   */
+  hcd(vertices) {
+    if (vertices.length === 0) {
       return [];
     }
-    const vertices = vertexNames.map((name) => this.namesInv.get(name));
-    if (vertices.some((vertex) => typeof vertex === 'undefined')) {
+    if (vertices.some((vertex) => this.edges[vertex] === undefined)) {
       return [];
     }
 
@@ -70,7 +59,64 @@ export class DAG {
         result.delete(target);
       }
     }
-    return [...result].map((vertex) => this.names[vertex]);
+    return [...result];
+  }
+}
+
+export class NamedDAG {
+  /**
+   * @param {ReadonlyArray<string>} names
+   * @param {ReadonlyArray<ReadonlyArray<number>>} edges
+   */
+  constructor(names, edges) {
+    /**
+     * @readonly
+     * @private
+     */
+    this.names = names;
+
+    /** @type {Map<string, number>} */
+    const namesInv = new Map();
+    for (let i = 0; i < names.length; i++) {
+      namesInv.set(names[i], i);
+    }
+    /**
+     * @type {Map<string, number>}
+     * @readonly
+     * @private
+     */
+    this.namesInv = namesInv;
+
+    /**
+     * @readonly
+     * @private
+     */
+    this.dag = new DAG(edges);
+  }
+
+  /**
+   * @param {string} source 
+   * @returns {string[]}
+   */
+  get(source) {
+    const sourceNum = this.namesInv.get(source);
+    if (sourceNum === undefined) {
+      return [];
+    }
+    const result = this.dag.get(sourceNum);
+    return result.map((targetNum) => this.names[targetNum]);
+  }
+
+  /**
+   * @param {string[]} vertexNames
+   * @returns {string[]}
+   */
+  hcd(vertexNames) {
+    const vertexNumbers = vertexNames.map((name) => this.namesInv.get(name));
+    if (vertexNumbers.some((num) => num === undefined)) {
+      return [];
+    }
+    return this.dag.hcd(vertexNumbers).map((num) => this.names[num]);
   }
 
   /** @param {string} text */
@@ -79,12 +125,11 @@ export class DAG {
     const edges = [];
     for (let lineRe = /^(\S+) (.*)$/gmu, m; (m = lineRe.exec(text)); ) {
       const source = m[1];
-      const targetNums = m[2] ? m[2].split(",").map((s) => parseInt(s)) : [];
+      const targetNums = m[2] ? m[2].split(',').map((s) => parseInt(s)) : [];
 
       names.push(source);
       edges.push(targetNums);
     }
-    const dag = new DAG(names, edges);
-    return dag;
+    return new NamedDAG(names, edges);
   }
 }

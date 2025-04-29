@@ -12,19 +12,13 @@ alias_dump.txt: dump_newest_only.txt
 alias_cdp.txt:
 	node fetch_alias_cdp.js $@
 
-ids-cdp.txt:
-	wget -O $@ https://github.com/cjkvi/cjkvi-ids/raw/master/ids-cdp.txt
+ids.txt:
+	wget -O $@ https://github.com/mandel59/babelstone-ids/raw/main/IDS.TXT
 
-ids-ext-cdef.txt:
-	wget -O $@ https://github.com/cjkvi/cjkvi-ids/raw/master/ids-ext-cdef.txt
-
-graph_ids.txt: ids-cdp.txt
+graph_ids.txt: ids.txt
 	node build_graph_ids.js $< $@
 
-graph_ids_cdef.txt: ids-ext-cdef.txt
-	node build_graph_ids.js $< $@
-
-graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdef.txt
+graph_merged.txt: graph_dump.txt graph_ids.txt
 	cat $^ > $@
 
 alias_merged.txt: alias_cdp.txt alias_dump.txt

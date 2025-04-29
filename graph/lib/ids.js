@@ -23,13 +23,10 @@ const idcArity = /** @type {const} */ ({
 
 /**
  * @param {string} token
- * @return {number}
+ * @returns {token is IDC}
  */
-function getArity(token) {
-  if (/^u(2ff[0-9a-f]|303e|31ef)$/.test(token)) {
-    return idcArity[/** @type {IDC} */ (token)];
-  }
-  return 0;
+export function isIDC(token) {
+  return /^u(2ff[0-9a-f]|303e|31ef)$/.test(token);
 }
 
 /** @typedef {string | IDSTree} IDSTreeNode */
@@ -44,16 +41,16 @@ export function parseIDS(tokens) {
   const stack = [];
   for (let i = tokens.length - 1; i >= 0; i--) {
     const token = tokens[i];
-    const arity = getArity(token);
-    if (arity === 0) {
+    if (!isIDC(token)) {
       stack.push(token);
       continue;
     }
+    const arity = idcArity[token];
     if (stack.length < arity) {
       throw new Error('invalid IDS');
     }
     /** @type {IDSTree} */
-    const subtree = [/** @type {IDC} */ (token)];
+    const subtree = [token];
     subtree.push(
       ...stack.splice(stack.length - arity, arity, subtree).reverse()
     );

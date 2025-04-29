@@ -4,6 +4,7 @@ import { createReadStream } from 'fs';
 import { createInterface } from 'readline';
 import { parseArgs } from 'util';
 import { DAG } from './lib/dag.js';
+import { isIDC } from './lib/ids.js';
 
 const { positionals } = parseArgs({
   strict: true,
@@ -86,9 +87,8 @@ for await (const { target, idses } of readIdsFile(srcpath)) {
     if (ids.length === 1 && ids[0] === target) {
       continue;
     }
-    const idc = /^u2ff[0-9ab]$/;
     const specialDc = /^u(246[0-9a-f]|247[0-3]|ff1f)$/; // encircled numerics and wildcard
-    const dcs = ids.filter((idcOrDc) => !idc.test(idcOrDc) && !specialDc.test(idcOrDc));
+    const dcs = ids.filter((idcOrDc) => !isIDC(idcOrDc) && !specialDc.test(idcOrDc));
 
     for (const dc of dcs) {
       refer(`abst:${target}`, `abst:${dc}`);

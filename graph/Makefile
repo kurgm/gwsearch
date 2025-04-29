@@ -27,8 +27,8 @@ graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdef.txt
 alias_merged.txt: alias_dump.txt
 	cat $^ > $@
 
-dag.txt: graph_merged.txt
-	node build_dag.js $< $@
+dag.txt: graph_merged.txt alias_dump.txt
+	node build_dag.js $^ $@
 
 clean:
 	-rm *.txt

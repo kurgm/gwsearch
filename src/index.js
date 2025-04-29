@@ -128,39 +128,54 @@ document.addEventListener('DOMContentLoaded', () => {
   /** @param {Desc[]} descs */
   function generateUl(descs) {
     const ul = document.createElement('ul');
-    for (const { name, children } of descs) {
+    for (const { names, children } of descs) {
       const li = document.createElement('li');
       if (children.length) {
-        li.dataset.children = children.join(',');
+        li.dataset.children = children.map((child) => child[0]).join(',');
         const btn = document.createElement('button');
         btn.appendChild(document.createTextNode('+'));
         li.appendChild(btn);
       }
-      if (name.startsWith('abst:')) {
-        let text = name.substring('abst:'.length);
-        if (/^abst:cdp-[0-9a-f]{4}$/.test(name)) {
-          text = `&CDP-${name.substring('abst:cdp-'.length).toUpperCase()};`;
-        } else if (/^abst:u[0-9a-f]{4,}$/.test(name)) {
-          const codepointHex = name.substring('abst:u'.length);
-          const char = String.fromCodePoint(parseInt(codepointHex, 16));
-          text = `U+${codepointHex.toUpperCase()}: ${char}`
+      for (const [index, name] of names.entries()) {
+        if (index !== 0) {
+          li.appendChild(document.createTextNode(' = '));
         }
-        li.appendChild(document.createTextNode(text));
-      } else {
-        const link = document.createElement('a');
-        link.href = `https://glyphwiki.org/wiki/${name}`;
-        const img = document.createElement('img');
-        img.loading = 'lazy';
-        img.src = `https://glyphwiki.org/glyph/${name}.50px.png`;
-        img.alt = img.title = link.title = name;
-        img.className = 'thumb';
-        link.appendChild(img);
-        link.appendChild(document.createTextNode(name));
-        li.appendChild(link);
+        const node = generateRepresentationNode(name, index !== 0);
+        li.appendChild(node);
       }
       ul.appendChild(li);
     }
     return ul;
+  }
+  /**
+   * @param {string} name 
+   * @param {boolean=} simpler
+   */
+  function generateRepresentationNode(name, simpler) {
+    if (name.startsWith('abst:')) {
+      let text = name.substring('abst:'.length);
+      if (/^abst:cdp-[0-9a-f]{4}$/.test(name)) {
+        text = `&CDP-${name.substring('abst:cdp-'.length).toUpperCase()};`;
+      } else if (/^abst:u[0-9a-f]{4,}$/.test(name)) {
+        const codepointHex = name.substring('abst:u'.length);
+        const char = String.fromCodePoint(parseInt(codepointHex, 16));
+        text = `U+${codepointHex.toUpperCase()}: ${char}`
+      }
+      return document.createTextNode(text);
+    }
+    const link = document.createElement('a');
+    link.href = `https://glyphwiki.org/wiki/${name}`;
+    link.title = name;
+    if (!simpler) {
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = `https://glyphwiki.org/glyph/${name}.50px.png`;
+      img.alt = img.title = name;
+      img.className = 'thumb';
+      link.appendChild(img);
+    }
+    link.appendChild(document.createTextNode(name));
+    return link;
   }
 
   resultDiv.addEventListener('click', (evt) => {

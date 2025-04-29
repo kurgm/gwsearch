@@ -48,8 +48,11 @@ export class DAG {
     });
   }
 
-  /** @param {string} filename */
-  async undump(filename) {
+  /**
+   * @param {string} filename
+   * @param {(name: string) => string=} normalize
+   */
+  async undump(filename, normalize = (x) => x) {
     const inputStream = createReadStream(filename);
     const inputRL = createInterface({
       input: inputStream,
@@ -61,8 +64,13 @@ export class DAG {
       if (columns.length !== 2) {
         continue;
       }
-      const [source, targetsStr] = columns;
-      for (const target of targetsStr.split(',')) {
+      const [source_, targetsStr] = columns;
+      const source = normalize(source_);
+      for (const target_ of targetsStr.split(',')) {
+        const target = normalize(target_);
+        if (source === target) {
+          continue;
+        }
         this.addEdge(source, target);
       }
     }

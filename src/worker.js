@@ -7,8 +7,8 @@ import graphURL from 'url:../graph/dag.txt';
 
 /**
  * @typedef {object} Desc
- * @property {string} name
- * @property {string[]} children
+ * @property {string[]} names
+ * @property {string[][]} children
  */
 
 const graphPromise = fetch(graphURL).then(async (response) => {
@@ -22,9 +22,9 @@ const graphPromise = fetch(graphURL).then(async (response) => {
  */
 async function processQuery(query) {
   const graph = await graphPromise;
-  return graph.hcd(query).sort(nameCompar).map((name) => ({
-    name,
-    children: graph.get(name).sort(nameCompar),
+  return graph.hcd(query).sort(nodeCompar).map((names) => ({
+    names,
+    children: graph.get(names[0]).sort(nodeCompar),
   }));
 }
 
@@ -35,9 +35,17 @@ async function processQuery(query) {
 async function getChildren(items) {
   const graph = await graphPromise;
   return items.map((name) => ({
-    name,
-    children: graph.get(name).sort(nameCompar),
+    names: graph.getNames(name),
+    children: graph.get(name).sort(nodeCompar),
   }));
+}
+
+/**
+ * @param {string[]} a 
+ * @param {string[]} b 
+ */
+function nodeCompar(a, b) {
+  return nameCompar(a[0], b[0]);
 }
 
 /**

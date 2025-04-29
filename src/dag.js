@@ -78,7 +78,9 @@ export class NamedDAG {
     /** @type {Map<string, number>} */
     const namesInv = new Map();
     for (let i = 0; i < names.length; i++) {
-      namesInv.set(names[i], i);
+      for (const alias of names[i].split('=')) {
+        namesInv.set(alias, i);
+      }
     }
     /**
      * @type {Map<string, number>}
@@ -95,8 +97,29 @@ export class NamedDAG {
   }
 
   /**
-   * @param {string} source 
+   * @param {string} name
    * @returns {string[]}
+   */
+  getNames(name) {
+    const index = this.namesInv.get(name);
+    if (index === undefined) {
+      return [];
+    }
+    return this.getNamesByIndex(index);
+  }
+
+  /**
+   * @param {number} index
+   * @returns {string[]}
+   * @private
+   */
+  getNamesByIndex(index) {
+    return this.names[index].split('=');
+  }
+
+  /**
+   * @param {string} source 
+   * @returns {string[][]}
    */
   get(source) {
     const sourceNum = this.namesInv.get(source);
@@ -104,19 +127,19 @@ export class NamedDAG {
       return [];
     }
     const result = this.dag.get(sourceNum);
-    return result.map((targetNum) => this.names[targetNum]);
+    return result.map((targetNum) => this.getNamesByIndex(targetNum));
   }
 
   /**
    * @param {string[]} vertexNames
-   * @returns {string[]}
+   * @returns {string[][]}
    */
   hcd(vertexNames) {
     const vertexNumbers = vertexNames.map((name) => this.namesInv.get(name));
     if (vertexNumbers.some((num) => num === undefined)) {
       return [];
     }
-    return this.dag.hcd(vertexNumbers).map((num) => this.names[num]);
+    return this.dag.hcd(vertexNumbers).map((num) => this.getNamesByIndex(num));
   }
 
   /** @param {string} text */

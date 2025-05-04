@@ -1,2 +1,3 @@
 *.txt
+!alias_bs-uc-cdp.txt
 !ids-cdp.txt

@@ -24,7 +24,7 @@ graph_ids_cdp.txt: ids-cdp.txt
 graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdp.txt
 	cat $^ > $@
 
-alias_merged.txt: alias_cdp.txt alias_dump.txt
+alias_merged.txt: alias_cdp.txt alias_dump.txt alias_bs-uc-cdp.txt
 	cat $^ > $@
 
 dag.txt: graph_merged.txt alias_merged.txt

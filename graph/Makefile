@@ -21,7 +21,10 @@ graph_ids.txt: ids.txt
 graph_ids_cdp.txt: ids-cdp.txt
 	node build_graph_ids.js $< $@
 
-graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdp.txt
+graph_ids_misc.txt: ids-misc.txt
+	node build_graph_ids.js $< $@
+
+graph_merged.txt: graph_dump.txt graph_ids.txt graph_ids_cdp.txt graph_ids_misc.txt
 	cat $^ > $@
 
 alias_merged.txt: alias_cdp.txt alias_dump.txt alias_bs-uc-cdp.txt

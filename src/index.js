@@ -11,10 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /** @param {string} queryStr */
   function parseQuery(queryStr) {
-    const tokens = queryStr.match(/[a-z][a-z0-9_-]{4,}|&CDP-[\dA-F]{4};|\S/gu) || [];
+    const tokens = queryStr.match(/[a-z][a-z0-9_-]{4,}|&CDP-[\dA-F]{4};|&_BS-UC-\d{4};|\S/gu) || [];
     return tokens.map((token) => {
       if (token.startsWith('&CDP-')) {
         return `abst:cdp-${token.substr('&CDP-'.length, 4).toLowerCase()}`;
+      }
+      if (token.startsWith('&_BS-UC-')) {
+        return `abst:_bs-uc-${token.substr('&_BS-UC-'.length, 4)}`;
       }
       if (token.length >= 5) {
         return token;
@@ -160,6 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const codepointHex = name.substring('abst:u'.length);
         const char = String.fromCodePoint(parseInt(codepointHex, 16));
         text = `U+${codepointHex.toUpperCase()}: ${char}`
+      } else if (/^abst:_bs-uc-\d{4}$/.test(name)) {
+        text = `&_BS-UC-${name.substring('abst:_bs-uc-'.length)};`;
       }
       return document.createTextNode(text);
     }

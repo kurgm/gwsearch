@@ -1,0 +1,39 @@
+# Provide alternative IDS sequences for characters where ？ is used in BabelStone IDS.TXT
+_BS-UC-0040	{40}	^⿱一&CDP-88A1;$
+_BS-UC-0064	{64}	^⿱{43}{43}$
+_BS-UC-0065	{65}	^⿼&CDP-8C78;㐅$
+_BS-UC-0066	{66}	^⿼&CDP-8C78;𠂭$
+_BS-UC-0076	{76}	^⿱&CDP-884A;一$
+_BS-UC-0079	{79}	^⿱&CDP-88A1;一$
+_BS-UC-0081	{81}	^⿸厂&CDP-88B4;$
+_BS-UC-0081	{88}	^亼$
+_BS-UC-0089	{89}	^⿹⿱⺈{92}{64}$
+_BS-UC-0092	{92}	^⿻口乚$
+_BS-UC-0092	{96}	^⿻丅{95}$
+_BS-UC-0104	{104}	^⿰夕{102}$
+_BS-UC-0105	{105}	^⿰{101}{103}$
+_BS-UC-0106	{106}	^⿰夕{103}$
+_BS-UC-0107	{107}	^𠬞$
+_BS-UC-0109	{109}	^千$
+U+268F5	𦣵	^⿳⿰臣⿱&CDP-8C4B;𠃑日夊$
+U+2696E	𦥮	^⿱&CDP-85F5;臼$
+U+2D53F	𭔿	^⿳⿱八𮠕一寸$
+U+2D8DE	𭣞	^⿰⿳十罒⿱𰀪𧘇支$
+# Provide alternative IDS sequences for characters where ㇯ is used in BabelStone IDS.TXT
+U+23D2B	𣴫	^⿰氵𡰻$
+U+24455	𤑕	^⿰火⿺熏力$
+U+27469	𧑩	^⿰虫⿱罒𫝕$
+U+2907E	𩁾	^⿱雨廴$
+U+2B815	𫠕	^⿸㢈⿹㇯&CDP-89DF;一灬$
+U+2D10F	𭄏	^⿰𠁅刂$
+U+2D4F1	𭓱	^⿱宀㇯禺冂$
+U+2D7A5	𭞥	^⿰忄𠁅$
+# Positioned forms (for the ease of searching)
+U+725C	牜	^牛$
+U+248E9	𤣩	^王$	*dotless 玉
+U+25AD7	𥫗	^竹$
+# U+8279	艹	^艸$
+U+7CF9	糹	^糸$
+U+8A01	訁	^言$
+U+91D2	釒	^金$
+U+98E0	飠	^食$

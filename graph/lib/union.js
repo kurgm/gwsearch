@@ -93,6 +93,7 @@ export class Union {
     });
 
     for await (const line of inputRL) {
+      if (line.startsWith('#')) continue;
       const columns = line.trim().split(' ');
       if (columns.length < 2) {
         continue;

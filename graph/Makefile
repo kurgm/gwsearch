@@ -34,6 +34,9 @@ dag.txt: graph_merged.txt alias_merged.txt
 	node build_dag.js $^ $@
 
 clean:
-	-rm *.txt
+	-rm dump_newest_only.txt
+	-rm alias_cdp.txt alias_dump.txt alias_merged.txt
+	-rm graph_dump.txt graph_ids.txt graph_ids_cdp.txt graph_ids_misc.txt graph_merged.txt ids.txt
+	-rm dag.txt
 
 .PHONY: all clean

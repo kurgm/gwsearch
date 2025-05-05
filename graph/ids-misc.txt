@@ -28,7 +28,6 @@ U+2B815	𫠕	^⿸㢈⿹㇯&CDP-89DF;一灬$
 U+2D10F	𭄏	^⿰𠁅刂$
 U+2D4F1	𭓱	^⿱宀㇯禺冂$
 U+2D7A5	𭞥	^⿰忄𠁅$
-U+31AE3	𱫣	^⿰火⿱覀&CDP-8962;$
 # Positioned forms (for the ease of searching)
 U+725C	牜	^牛$
 U+248E9	𤣩	^王$	*dotless 玉

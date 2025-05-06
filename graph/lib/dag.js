@@ -84,7 +84,9 @@ export class DAG {
       process.exit(1);
     });
 
-    const sortedVertices = this.toposort();
+    this.breakCycles();
+
+    const sortedVertices = this.sortByInDegDesc();
     const sInv = makeInv(sortedVertices);
     for (const source of sortedVertices) {
       const targets = this.edges.get(source);
@@ -131,34 +133,21 @@ export class DAG {
     }
   }
 
-  toposort() {
-    this.breakCycles();
+  sortByInDegDesc() {
+    const vertices = new Set(this.edges.keys());
+    /** @type {Map<string, number>} */
+    const inDeg = new Map();
 
-    /** @type {string[]} */
-    const result = [];
-
-    /** @type {Set<string>} */
-    const visited = new Set();
-
-    /** @param {string} v */
-    const dfs = (v) => {
-      if (visited.has(v)) {
-        return;
+    for (const targets of this.edges.values()) {
+      for (const target of targets) {
+        vertices.add(target);
+        inDeg.set(target, (inDeg.get(target) ?? 0) + 1);
       }
-      visited.add(v);
-      const targets = this.edges.get(v);
-      if (targets) {
-        for (const w of targets) {
-          dfs(w);
-        }
-      }
-      result.push(v);
-    };
-
-    for (const source of this.edges.keys()) {
-      dfs(source);
     }
-    result.reverse();
-    return result;
+    return [...vertices].sort((a, b) => {
+      const aDeg = inDeg.get(a) ?? 0;
+      const bDeg = inDeg.get(b) ?? 0;
+      return bDeg - aDeg;
+    });
   }
 }

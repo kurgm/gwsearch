@@ -1,3 +1,5 @@
+import { decode as decodeVLQ } from "vlq";
+
 export class DAG {
   /**
    * @param {ReadonlyArray<ReadonlyArray<number>>} edges
@@ -148,7 +150,7 @@ export class NamedDAG {
     const edges = [];
     for (let lineRe = /^(\S+) (.*)$/gmu, m; (m = lineRe.exec(text)); ) {
       const source = m[1];
-      const targetNums = m[2] ? m[2].split(',').map((s) => parseInt(s)) : [];
+      const targetNums = m[2] ? decodeVLQ(m[2]) : [];
 
       names.push(source);
       edges.push(targetNums);

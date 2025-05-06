@@ -1,6 +1,8 @@
 import { createWriteStream, createReadStream } from 'fs';
 import { createInterface } from 'readline';
 
+import { encode as encodeVLQ } from 'vlq';
+
 /** @param {string[]} arr */
 function makeInv(arr) {
   /** @type {Record<string, number>} */
@@ -92,7 +94,7 @@ export class DAG {
       const targets = this.edges.get(source);
 
       const targetNums = targets ? Array.from(targets, (target) => sInv[target]) : [];
-      const line = `${source} ${[...targetNums].join(',')}\n`;
+      const line = `${source} ${encodeVLQ(targetNums)}\n`;
       stream.write(line);
     }
     await new Promise((resolve) => {

@@ -14,6 +14,16 @@
     <a href="https://github.com/kurgm/gwsearch#readme">解説</a>
     <small>(関連: <a href="http://www.chise.org/ids-find">CHISE IDS 漢字検索</a>)</small>
   </p>
+  <details>
+    <summary>使い方</summary>
+    <p>検索したい部品の名前を空白区切りで検索欄に入力して「検索」ボタンを押してください。</p>
+    <p>部品はグリフウィキのグリフ名を指定できるほか、漢字（関連字）を指定することもできます。<br>
+      入力例: 「u7cf8-01 u7cf8-02」「u4eba-03 干」「士 冖 殳」</p>
+    <p>検索結果は文字（「U+6BBB: 殻」など）またはグリフ（画像付きのリンク）の2種類で構成されます。<br>
+      （検索条件にグリフ名が1つ以上含まれているときは、検索結果に文字は含まれません。）</p>
+    <p>検索結果のうち、行の先頭に [+] ボタンがあれば押下で展開でき、その文字やグリフを含む別の文字やグリフが1つ深い階層に列挙されます。</p>
+    <p>詳細は<a href="https://github.com/kurgm/gwsearch?tab=readme-ov-file#%E4%BD%BF%E3%81%84%E6%96%B9">解説#使い方</a>をご参照ください。</p>
+  </details>
   <form action="#" id="search_form">
     <input type="text" name="query" id="search_query" placeholder="漢字・グリフ名を空白区切りで複数指定">
     <input type="submit" value="検索">

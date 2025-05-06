@@ -1,3 +1,19 @@
+details {
+  margin: 0.5em 0;
+  border: 1px solid #cccccc;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: smaller;
+}
+
+details summary {
+  margin: -8px;
+  padding: 8px;
+  cursor: pointer;
+  background-color: #f3f3f3;
+  border-radius: 4px;
+}
+
 img.thumb {
   border: 1px solid #aaaaaa;
   vertical-align: -25%;

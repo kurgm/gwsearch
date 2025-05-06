@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { NamedDAG } from './dag';
+import { NamedDAG } from './dag.js';
 
 // @ts-ignore
 import graphURL from 'url:../graph/dag.txt';

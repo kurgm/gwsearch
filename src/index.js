@@ -1,8 +1,8 @@
-/** @typedef {import("./worker").Desc} Desc */
-/** @typedef {import("./worker").WRequest} WRequest */
-/** @typedef {import("./worker").WResponse} WResponse */
-/** @typedef {import("./worker").WorkerRequest} WorkerRequest */
-/** @typedef {import("./worker").WorkerResponse} WorkerResponse */
+/** @typedef {import("./worker.js").Desc} Desc */
+/** @typedef {import("./worker.js").WRequest} WRequest */
+/** @typedef {import("./worker.js").WResponse} WResponse */
+/** @typedef {import("./worker.js").WorkerRequest} WorkerRequest */
+/** @typedef {import("./worker.js").WorkerResponse} WorkerResponse */
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = /** @type {HTMLFormElement} */(document.getElementById('search_form'));
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       type: "query",
       query,
     });
-    return /** @type {import('./worker').ProcessQueryResponse} */(res).value;
+    return /** @type {import('./worker.js').ProcessQueryResponse} */(res).value;
   }
 
   /**
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       type: "children",
       items,
     });
-    return /** @type {import('./worker').ChildrenResponse} */(res).value;
+    return /** @type {import('./worker.js').ChildrenResponse} */(res).value;
   }
 
   /** @type {string[] | null} */

@@ -57,15 +57,43 @@ function nameCompar(a, b) {
   const ma = ucsRe.exec(a);
   const mb = ucsRe.exec(b);
   const ownedRe = /_/;
-  const idsRe = /^u2ff[0-9ab]-/;
+  const idsRe =
+    /^(kumimoji-|sou?saku-)?u(2ff[0-9a-f]|31ef)-(u[0-9a-f]{4,}|cdp[on]?-)/;
   return (
     (-a.startsWith('abst:') - -b.startsWith('abst:')) ||
     (+ownedRe.test(a) - +ownedRe.test(b)) ||
     (+idsRe.test(a) - +idsRe.test(b)) ||
     (+!ma - +!mb) ||
-    (ma && mb && (parseInt(ma[1], 16) - parseInt(mb[1], 16))) ||
+    (ma && mb && (order(parseInt(ma[1], 16)) - order(parseInt(mb[1], 16)))) ||
     (a > b ? 1 : a < b ? -1 : 0)
   );
+}
+
+/**
+ * @param {number} codepoint
+ */
+function order(codepoint) {
+  /** @type {readonly [number, number][]} */
+  const ranges = [
+    [0x4e00, 0x9fff], // URO
+    [0x3400, 0x4dbf], // ExtA
+    [0x20000, 0x2ebef], // ExtB-F
+    [0x30000, 0x323af], // ExtG-H
+    [0x2ebf0, 0x2ee5f], // ExtI
+    [0x323b0, 0x3347f], // ExtJ?
+    [0xf900, 0xfaff], // Compatibility
+    [0x2f800, 0x2fa1f], // Compatibility Supplement
+    [0x2f00, 0x2fdf], // Kangxi Radicals
+    [0x2e80, 0x2eff], // CJK Radicals Supplement
+    [0x31c0, 0x31ef], // CJK Strokes
+  ];
+  let rangeIndex = ranges.findIndex(
+    ([start, end]) => start <= codepoint && codepoint <= end
+  );
+  if (rangeIndex === -1) {
+    rangeIndex = ranges.length;
+  }
+  return codepoint + rangeIndex * 0x40000;
 }
 
 /**

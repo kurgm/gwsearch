@@ -11,23 +11,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /** @param {string} queryStr */
   function parseQuery(queryStr) {
-    const tokens = queryStr.match(/[a-z][a-z0-9_-]{4,}|&CDP-[\dA-F]{4};|&_BS-UC-\d{4};|\S/gu) || [];
-    return tokens.map((token) => {
-      if (token.startsWith('&CDP-')) {
-        return `abst:cdp-${token.substr('&CDP-'.length, 4).toLowerCase()}`;
+    /** @type {string[]} */
+    const query = [];
+    for (
+      let tokenRe =
+          /([a-z][a-z0-9_-]{4,})|&CDP-([\dA-F]{4});|&_BS-UC-(\d{4});|U\+([\dA-F]{1,6})|&#[Xx]([\da-fA-F]+);|&#(\d+);|(\S)/gu,
+        m;
+      (m = tokenRe.exec(queryStr)) !== null;
+
+    ) {
+      const [, glyphName, cdp, bsuc, codepoint0, hexCode, decCode, singleChar] =
+        m;
+      if (glyphName) {
+        query.push(glyphName);
+        continue;
       }
-      if (token.startsWith('&_BS-UC-')) {
-        return `abst:_bs-uc-${token.substr('&_BS-UC-'.length, 4)}`;
+      if (cdp) {
+        query.push(`abst:cdp-${cdp.toLowerCase()}`);
+        continue;
       }
-      if (token.length >= 5) {
-        return token;
+      if (bsuc) {
+        query.push(`abst:_bs-uc-${bsuc}`);
+        continue;
       }
-      let codepoint = token.codePointAt(0).toString(16);
-      if (codepoint.length < 4) {
-        codepoint = `000${codepoint}`.slice(-4);
+      /** @type {number} */
+      let codepoint;
+      if (codepoint0) {
+        codepoint = parseInt(codepoint0, 16);
+      } else if (hexCode) {
+        codepoint = parseInt(hexCode, 16);
+      } else if (decCode) {
+        codepoint = parseInt(decCode, 10);
+      } else {
+        codepoint = singleChar.codePointAt(0);
       }
-      return `abst:u${codepoint}`;
-    });
+      query.push(`abst:u${codepoint.toString(16).padStart(4, '0')}`);
+    }
+    return query;
   }
 
   const worker = new Worker(new URL('worker.js', import.meta.url), { type: 'module' });

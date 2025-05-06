@@ -27,9 +27,12 @@ function refer(referrer, target) {
 }
 
 for await (const { name, related, data } of readDump(srcpath)) {
-  for (const m of name.match(/(^|-)(u[0-9a-f]{4,}|cdp-[0-9a-f]{4})(?=-|$)/g) || []) {
-    const subname = m.startsWith('-') ? m.substring(1) : m;
-    refer(name, `abst:${subname}`);
+  if (!name.includes('_')) {
+    for (const subname of name.match(
+      /(?<=^|-)(u[0-9a-f]{4,}|cdp-[0-9a-f]{4})(?=-|$)/g
+    ) || []) {
+      refer(name, `abst:${subname}`);
+    }
   }
   if (related !== 'u3013') {
     refer(name, `abst:${related}`);
